@@ -1,6 +1,5 @@
 import amqp from 'amqplib/callback_api.js'
 
-
 import { RABBIT_MQ_URL } from "../../../config/secrets/secrets.js"
 import { CREDITS_TOPIC,CREDITS_UPDATE_ROUTING_KEY } from '../../../config/rabbitmq/queue.js'
 

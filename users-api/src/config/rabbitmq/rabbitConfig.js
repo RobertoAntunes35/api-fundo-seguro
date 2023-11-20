@@ -33,8 +33,8 @@ async function connectRabbitMqAndCreateQueues() {
             queues.CREDITS_TOPIC
             )
         createQueue(connection, 
-            queues.USER_CONFIRMATION_QUEUE,
-            queues.USER_CONFIRMATION_ROUTING_KEY,
+            queues.TRANSATION_CONFIRMATION_QUEUE,
+            queues.TRANSATION_CONFIRMATION_ROUTING_KEY,
             queues.CREDITS_TOPIC)
         
         createQueue(connection, 
@@ -43,8 +43,8 @@ async function connectRabbitMqAndCreateQueues() {
             queues.DEBTS_TOPIC
             )
         createQueue(connection, 
-            queues.USER_CONFIRMATION_QUEUE,
-            queues.USER_CONFIRMATION_ROUTING_KEY,
+            queues.TRANSATION_CONFIRMATION_QUEUE,
+            queues.TRANSATION_CONFIRMATION_ROUTING_KEY,
             queues.DEBTS_TOPIC
             )
         console.info("Queues and topics were defined")

@@ -6,19 +6,24 @@ import { createInitialDateCreditsMongoDB } from './src/config/db/initialDateCred
 import { connectRabbitMQ } from './src/config/rabbitmq/rabbitConfig.js'
 import checkToken from './src/config/auth/checkToken.js';
 
-import { sendMessageDebtsUpdateQueue, sendMessageCreditsUpdadeQueue } from "./src/modules/product/rabbitmq/ProductStockUpdate.js"
+import { sendMessageDebtsUpdateQueue } from "./src/modules/product/rabbitmq/DebitsUptade.js"
+import { sendMessageCreditsUpdadeQueue } from "./src/modules/product/rabbitmq/CreditsUptdate.js"
+import order from './src/modules/sales/routes/OrderRoutes.js'
+
 
 const app = express();
 const env = process.env;
 const PORT = env.PORT || 8082;
 
 connectMongoDB();
+
 createInitialDateDebtsMongoDB();
 createInitialDateCreditsMongoDB();
 connectRabbitMQ();
 
 // Protegendo a Aplicacao
 // app.use(checkToken)
+app.use(order)
 
 app.get('/teste_debts', (req, res) => {
     try {
@@ -78,6 +83,7 @@ app.get('/teste_credits', (req, resp) => {
         return resp.status(500).json({error: true})
     }
 })
+
 
 app.get("/api/status", async (req, res) => {
     return res.status(200).json({

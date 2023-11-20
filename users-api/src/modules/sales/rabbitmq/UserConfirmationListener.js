@@ -1,8 +1,7 @@
 import amqp from 'amqplib/callback_api.js'
 import { RABBIT_MQ_URL } from "../../../config/secrets/secrets.js"
-import { USER_CONFIRMATION_QUEUE } from '../../../config/rabbitmq/queue.js'
-import CreditsService from '../service/CreditsService.js.js';
-
+import { TRANSATION_CONFIRMATION_QUEUE } from '../../../config/rabbitmq/queue.js'
+import CreditsService from '../service/CreditsService.js';
 
 // Adaptar para o codigo em questão (mobile)
 export function listenToUserConfirmationQueue() {
@@ -16,7 +15,7 @@ export function listenToUserConfirmationQueue() {
                 throw error; 
             }
             channel.consume(
-                USER_CONFIRMATION_QUEUE,
+                TRANSATION_CONFIRMATION_QUEUE,
                 (message) => {
                 console.info(
                 `Recieving message from queue: ${message.content.toString()}`);

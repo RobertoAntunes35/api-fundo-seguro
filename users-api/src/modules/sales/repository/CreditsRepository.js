@@ -13,7 +13,7 @@ class CreditsRepository {
         try {
             return await Credits.findById(id);
         } catch (err) {
-            console.error(error.message);
+            console.error(err.message);
             return null;
         }
     }
