@@ -12,7 +12,7 @@ public class DebtsCreditsApiApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(DebtsCreditsApiApplication.class, args);
-		System.out.println("Hello World");
+		System.out.println("APLICACAO EM ANDAMENTO");
 
 	}
 }

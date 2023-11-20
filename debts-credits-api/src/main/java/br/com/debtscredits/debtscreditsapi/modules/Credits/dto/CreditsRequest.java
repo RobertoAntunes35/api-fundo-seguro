@@ -16,4 +16,6 @@ public class CreditsRequest {
     private String metodo_pagamento;
     private Double valor;
     private Integer categoryId;
+
+    
 }

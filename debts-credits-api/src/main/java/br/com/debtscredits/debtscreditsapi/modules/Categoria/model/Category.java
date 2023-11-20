@@ -21,6 +21,9 @@ public class Category {
     @Column(name = "DESCRIPTION", nullable = false)
     private String description;
 
+    @Column(name="TIPO", nullable = false)
+    private String tipo;
+    
     public static Category of(CategoryRequest request) {
         var response = new Category();
         BeanUtils.copyProperties(request, response);
