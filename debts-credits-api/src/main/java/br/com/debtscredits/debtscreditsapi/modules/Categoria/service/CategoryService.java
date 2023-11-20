@@ -20,7 +20,7 @@ public class CategoryService {
 
    public List<CategoryResponse> findByDescription(String description) {
       if (isEmpty(description)) {
-         throw new ValidationException("The category must be informed");
+         throw new ValidationException("The DESCRIPTION must be informed");
       }
       return categoryRepository
               .findByDescriptionIgnoreCaseContaining(description)

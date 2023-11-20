@@ -2,8 +2,6 @@ package br.com.debtscredits.debtscreditsapi.modules.Credits.model;
 
 import java.time.LocalDateTime;
 
-import org.springframework.beans.BeanUtils;
-
 import br.com.debtscredits.debtscreditsapi.modules.Categoria.model.Category;
 import br.com.debtscredits.debtscreditsapi.modules.Credits.dto.CreditsRequest;
 import jakarta.persistence.Column;
@@ -59,7 +57,10 @@ public class CreditsModel {
     public static CreditsModel of(CreditsRequest request,Category category) {
                 return CreditsModel
                 .builder()
+                .metodo_pagamento(request.getMetodo_pagamento())
+                .tipo_credito(request.getTipo_credito())
                 .category(category)
+                .date_import(request.getDate_import())
                 .descricao(request.getDescricao())
                 .valor(request.getValor())
                 .build();

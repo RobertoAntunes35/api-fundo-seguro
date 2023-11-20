@@ -3,7 +3,6 @@ package br.com.debtscredits.debtscreditsapi.modules.Credits.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,12 +27,17 @@ public class CreditsController {
     }
     @GetMapping
     public List<CreditsResponse> findAll() {
-        return null;
+        return creditsService.findAll();
     }
 
     @GetMapping("{description}")
-    public List<CreditsResponse> findByDescription(@PathVariable Integer description) {
-        return null;
+    public List<CreditsResponse> findByDescription(@PathVariable String description) {
+        return creditsService.findByDescricao(description);
+    }
+
+    @GetMapping("id/{id}")
+    public CreditsResponse findById(@PathVariable Integer id) {
+        return creditsService.findByIdResponse(id);
     }
 
  }

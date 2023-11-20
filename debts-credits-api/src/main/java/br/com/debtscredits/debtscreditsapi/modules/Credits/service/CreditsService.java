@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.com.debtscredits.debtscreditsapi.config.exception.ValidationException;
-import br.com.debtscredits.debtscreditsapi.modules.Categoria.repository.CategoryRepository;
 import br.com.debtscredits.debtscreditsapi.modules.Categoria.service.CategoryService;
 import br.com.debtscredits.debtscreditsapi.modules.Credits.dto.CreditsRequest;
 import br.com.debtscredits.debtscreditsapi.modules.Credits.dto.CreditsResponse;
@@ -18,9 +17,9 @@ import static org.springframework.util.ObjectUtils.isEmpty;
 
 @Service
 public class CreditsService {
-    @Autowired
+    
+   @Autowired
    private CreditsRepository creditsRepository;
-
 
    @Autowired
    private CategoryService categoryService;
@@ -28,7 +27,7 @@ public class CreditsService {
 
    public List<CreditsResponse> findByDescricao(String description) {
       if (isEmpty(description)) {
-         throw new ValidationException("The category must be informed");
+         throw new ValidationException("The description must be informed");
       }
       return creditsRepository
               .findByDescricaoIgnoreCaseContaining(description)
@@ -51,7 +50,7 @@ public class CreditsService {
 
    public CreditsModel findById(Integer id) {
       if (isEmpty(id)) {
-         throw new ValidationException("The credits ID was not informed");
+         throw new ValidationException("The credits ID to category was not informed");
       }
       return creditsRepository
               .findById(id)
@@ -73,8 +72,7 @@ public class CreditsService {
    }
     private void validateDataCreditsDescriptionInformed(CreditsRequest request) {
         if(isEmpty(request.getDescricao())) {
-            throw new ValidationException("The description the credits wasn't not informed");
+            throw new ValidationException("The description credits wasn't not informed");
         }
     }
-
 }
