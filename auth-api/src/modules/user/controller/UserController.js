@@ -7,8 +7,6 @@ class UserController {
         console.log(req)
         let acessToken = await UserService.getAcessToken(req);
         return res.status(acessToken.status).json(acessToken)
-        // console.log(acessToken)
-        // return res.status(acessToken.status).json(acessToken)
     }
     async findByEmail(req, res) {
         let user = await UserService.findByEmail(req);

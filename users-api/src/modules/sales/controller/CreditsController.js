@@ -1,10 +1,10 @@
 import CreditsService from "../service/CreditsService.js";
 
 
-class OrderController {
+class CreditsController {
     async createOrder(req, res) {
-        let order = await CreditsService.createCredits(req);
-        return res.status(order.status).json(order)
+        let credits = await CreditsService.createCredits(req);
+        return res.status(credits.status).json(credits)
     }
 
     async findById(req, res) {
@@ -12,5 +12,4 @@ class OrderController {
         return res.status(order.status).json(order)
     }
 }
-
-export default new OrderController();
+export default new CreditsController();

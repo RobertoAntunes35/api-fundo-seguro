@@ -57,6 +57,5 @@ public class CreditsController {
         creditsService.delete(id);
         return SucessResponse.create("The credits was deleted");
     }
-
- }
+}
 

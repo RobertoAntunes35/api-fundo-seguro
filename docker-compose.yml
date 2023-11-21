@@ -1,32 +1,123 @@
 version: "3"
-services:
+services: 
+
+  user-db:
+    image: mongo:latest
+    container_name: user-db
+    restart: always
+    networks:
+      - user-network
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=123456
+    ports:
+      - 27017:27017
+      - 28017:28017
+
   auth-db:
     image: postgres:11
     container_name: auth-db
     restart: always
-    environment: 
-    - POSTGRES_DB=auth-db
-    - POSTGRES_USER=admin
-    - POSTGRES_PASSWORD=123456
-    ports: 
-    - 5432:5432
+    networks:
+      - user-network
+    environment:
+      - POSTGRES_DB=auth-db
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=123456
+    ports:
+      - 5432:5432
 
-  debts_credits-db:
-    image: tutum/mongodb
-    container_name: debts_credits
+  user_rabbit:
+    image: rabbitmq:3-management
+    container_name: user_rabbit
+    hostname: user_rabbit
+    networks:
+      - user-network
+    ports:
+      - 5672:5672
+      - 25676:25676
+      - 15672:15672
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+
+  debtsAndCredits-db:
+    image: postgres:11
+    container_name: debtsAndCredits-db
     restart: always
-    environment: 
-    - MONGODB_USER=admin
-    - MONGODB_PASS=123456
-    - MONGODB_DATABASE=debts_credits
-    ports: 
-    - 27017:27017
-    - 28017:28017
+    networks:
+      - user-network
+    environment:
+      - POSTGRES_DB=debtsAndCredits-db
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=123456
+    ports:
+      - 5433:5432
 
-  sales_rabbit:
-        image: rabbitmq:3-management
-        container_name: sales_rabbit
-        ports: 
-        - 5672:5672
-        - 25676:25676
-        - 15672:15672
+  debtsAndCredits-api:
+    build: './debtsAndCredits-api'
+    container_name: debtsAndCredits-api
+    depends_on:
+      - debtsAndCredits-db
+      - user_rabbit
+    networks:
+      - user-network
+    environment:
+      - PORT=8081
+      - API_SECRET=8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92=
+      - DB_HOST=debtsAndCredits-db
+      - DB_NAME=debtsAndCredits-db
+      - DB_USER=admin
+      - DB_PASSWORD=123456
+      - DB_PORT=5432
+      - RABBIT_MQ_HOST=user_rabbit
+      - RABBIT_MQ_PORT=5672
+      - RABBIT_MQ_USER=guest
+      - RABBIT_MQ_PASSWORD=guest
+      - user_HOST=user-api
+      - user_PORT=8082
+    ports:
+      - 8081:8081
+
+  user-api:
+    build: './user-api'
+    container_name: user-api
+    depends_on:
+      - user-db
+      - user_rabbit
+      - debtsAndCredits-api
+    networks:
+      - user-network
+    environment:
+      - PORT=8082
+      - API_SECRET=8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92=
+      - MONGO_DB_URL=mongodb://admin:123456@user-db:27017/
+      - RABBIT_MQ_URL=amqp://guest:guest@user_rabbit:5672/
+      - debtsAndCredits_API_URL=http://debtsAndCredits-api:8081/api/debtsAndCredits
+      - NODE_ENV=container
+    ports:
+      - 8082:8082
+
+  auth-api:
+    build: './auth-api'
+    container_name: auth-api
+    depends_on:
+      - auth-db
+      - debtsAndCredits-api
+    networks:
+      - user-network
+    environment:
+      - PORT=8080
+      - API_SECRET=8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92=
+      - DB_HOST=auth-db
+      - DB_NAME=auth-db
+      - DB_USER=admin
+      - DB_PASSWORD=123456
+      - DB_PORT=5432
+      - NODE_ENV=container
+    ports:
+      - 8080:8080
+
+networks:
+  user-network:
+    driver: bridge

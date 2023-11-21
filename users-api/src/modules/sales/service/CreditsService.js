@@ -3,7 +3,7 @@ import * as  httpStatus from "../../../config/constants/httpStatus.js"
 import { PENDING, ACCEPTED, REJECTED } from "../status/AccountStatus.js"
 import AccountException from "../exception/AccountException.js";
 import CreditsRepository from "../repository/CreditsRepository.js";
-import ProductClient from '../../product/client/ProductClient.js';
+import ProductClient from '../../product/client/CreditsClient.js';
 
 
 class CreditsService {
@@ -15,9 +15,10 @@ class CreditsService {
 
             this.validadeCreditsData(creditsData)
             let credits = this.createInitialOrderData(creditsData, authUser)
-            let createOrder = await this.validadeStockProduct(credits, authorization)
+            await this.validateTransationCredits(credits, authorization)
             this.sendMessage(credits)
             let createCredits =  await CreditsRepository.save(credits);
+            sendMessageCreditsUpdadeQueue(createCredits.credits)
             return {
                 status: httpStatus.SUCESS,
                 createCredits,
@@ -43,8 +44,8 @@ class CreditsService {
                 let existingCredits = await CreditsRepository.findById(credits.credits_id)
                 if (existingCredits && order.status !== existingCredits.status) {
                     existingCredits.status = order.status;
-                    existingCredits.updatedAt = new Date()
-                    await CreditsRepository.save(existingCredits)
+                    existingCredits.updatedAt = new Date();
+                    await CreditsRepository.save(existingCredits);
                 }
             }
             else {
@@ -56,10 +57,9 @@ class CreditsService {
         }
     }
     
-    async validadeStockProduct(order, token) {
-        // creditIsOk = true
-    let creditsIsOk = await ProductClient.checkProductStock(
-        order.products,
+    async validateTransationCredits(credits, token) {
+    let creditsIsOk = await ProductClient.checkTransationCredits(
+        credits.products,
         token
     );
         if (creditsIsOk) {
@@ -75,9 +75,9 @@ class CreditsService {
             user: authUser,
             createdAt: new Date(),
             updatedAt: new Date(),
-            credits: creditsData,
+            credits: creditsData.credits,
         }
-    } 
+    }
     sendMessage(createCredits) {
         const message = {
             userId: createCredits.id,
@@ -92,7 +92,7 @@ class CreditsService {
         this.validateInformadedId(id);
         const existingOrder = await CreditsRepository.findById(id);
         if(!existingOrder) {
-            throw new AccountException(httpStatus.BAD_REQUEST, "THE ORDER WAS NOT FOUND")
+            throw new AccountException(httpStatus.BAD_REQUEST, "THE CREDITS WAS NOT FOUND")
         }
         return {
             status: httpStatus.SUCESS,
@@ -111,5 +111,4 @@ class CreditsService {
         }
     }
 }
-
 export default new CreditsService();

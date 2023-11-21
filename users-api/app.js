@@ -8,22 +8,35 @@ import checkToken from './src/config/auth/checkToken.js';
 
 import { sendMessageDebtsUpdateQueue } from "./src/modules/product/rabbitmq/DebitsUptade.js"
 import { sendMessageCreditsUpdadeQueue } from "./src/modules/product/rabbitmq/CreditsUptdate.js"
-import order from './src/modules/sales/routes/OrderRoutes.js'
+import OrderRoutes from './src/modules/sales/routes/CreditsRoutes.js'
 
 
 const app = express();
+
 const env = process.env;
 const PORT = env.PORT || 8082;
 
 connectMongoDB();
 
-createInitialDateDebtsMongoDB();
-createInitialDateCreditsMongoDB();
 connectRabbitMQ();
 
+app.use(express.json())
+
+app.get("/api/initial-data", async (req, res) => {
+    createInitialDateDebtsMongoDB();
+    createInitialDateCreditsMongoDB();
+    return res.status(200).json({
+        service: "USER-TRANSACTIONS-API",
+        message:"Data was created",
+        httpStatus: 200,
+    })
+})
+
 // Protegendo a Aplicacao
-// app.use(checkToken)
-app.use(order)
+app.use(checkToken)
+
+// Rotas 
+app.use(OrderRoutes)
 
 app.get('/teste_debts', (req, res) => {
     try {
