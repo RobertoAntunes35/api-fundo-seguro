@@ -14,7 +14,7 @@ const PORT = env.PORT || 8080;
 app.use(express.json());
 app.use(cors());
 app.use(UserRoutes);
-app.use(CheckToken);
+// app.use(CheckToken);
 
 app.get("/api/status", (req, res) => {
     return res.status(200).json({

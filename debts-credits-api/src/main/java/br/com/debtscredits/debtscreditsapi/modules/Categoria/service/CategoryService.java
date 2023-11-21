@@ -1,9 +1,11 @@
 package br.com.debtscredits.debtscreditsapi.modules.Categoria.service;
 
+import br.com.debtscredits.debtscreditsapi.config.SucessResponse;
 import br.com.debtscredits.debtscreditsapi.config.exception.ValidationException;
 import br.com.debtscredits.debtscreditsapi.modules.Categoria.dto.CategoryRequest;
 import br.com.debtscredits.debtscreditsapi.modules.Categoria.dto.CategoryResponse;
 import br.com.debtscredits.debtscreditsapi.modules.Categoria.repository.CategoryRepository;
+import br.com.debtscredits.debtscreditsapi.modules.Credits.service.CreditsService;
 import br.com.debtscredits.debtscreditsapi.modules.Categoria.model.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,8 +17,11 @@ import static org.springframework.util.ObjectUtils.isEmpty;
 
 @Service
 public class CategoryService {
+   
    @Autowired
    private CategoryRepository categoryRepository;
+   
+   private CreditsService creditsService;
 
    public List<CategoryResponse> findByDescription(String description) {
       if (isEmpty(description)) {
@@ -54,6 +59,29 @@ public class CategoryService {
       validateCategoryNameInformed(request);
       var category = categoryRepository.save(Category.of(request));
       return CategoryResponse.of(category);
+   }
+   // Esta com erro 20/11/2023 22:06
+   public SucessResponse delete(Integer id) {
+      validadeInformedId(id);
+      if (creditsService.existByCategoryId(id)) {
+         throw new ValidationException("You cannot dele this category because it's alredy defined by a credit");
+      }
+      categoryRepository.deleteById(id);
+      return SucessResponse.create("The category was deleted");
+   }
+   
+   public CategoryResponse update(CategoryRequest request, Integer id) {
+      validateCategoryNameInformed(request);
+      validadeInformedId(id);
+      var category = Category.of(request);
+      category.setId(id);
+      categoryRepository.save(category);
+      return CategoryResponse.of(category);
+   }
+   private void validadeInformedId(Integer id) {
+      if(isEmpty(id)) {
+         throw new ValidationException("The Supplider id must be informed");
+      }
    }
    private void validateCategoryNameInformed(CategoryRequest request) {
       if (isEmpty(request.getDescription())) {

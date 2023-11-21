@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import br.com.debtscredits.debtscreditsapi.config.SucessResponse;
 import br.com.debtscredits.debtscreditsapi.config.exception.ValidationException;
 import br.com.debtscredits.debtscreditsapi.modules.Categoria.service.CategoryService;
 import br.com.debtscredits.debtscreditsapi.modules.Credits.dto.CreditsRequest;
@@ -65,6 +66,39 @@ public class CreditsService {
     var credits = creditsRepository.save(CreditsModel.of(request, category));
     return CreditsResponse.of(credits);
 }
+
+   public List<CreditsResponse> findByCategoryId(Integer categoryId) {
+      if(isEmpty(categoryId)) {
+         throw new ValidationException("The category ID name must be informed");
+      }
+      return creditsRepository
+      .findByCategoryId(categoryId)
+      .stream()
+      .map(CreditsResponse::of)
+      .collect(Collectors.toList());
+   }
+
+   public Boolean existByCategoryId(Integer categoryId) {
+      return creditsRepository.existsByCategoryId(categoryId);
+   } 
+
+   public SucessResponse delete(Integer id) {
+      if (isEmpty(id)) {
+         throw new ValidationException("The id wasn't informed to remove the credits");
+      }
+      creditsRepository.deleteById(id);
+      return SucessResponse.create("The credits was deleted");
+   }
+   
+   public CreditsResponse update(CreditsRequest request, Integer id) {
+      validateDataIdCreditsInformed(id);
+      validateCategoryIdInformed(request);
+      var category = categoryService.findById(request.getCategoryId());
+      var credits = creditsRepository.save(CreditsModel.of(request, category));
+      credits.setId(id);
+      return CreditsResponse.of(credits);
+   }
+   
    private void validateCategoryIdInformed(CreditsRequest request) {
     if (isEmpty(request.getCategoryId())) {
         throw new ValidationException("The category id wasn't informed");
@@ -75,4 +109,10 @@ public class CreditsService {
             throw new ValidationException("The description credits wasn't not informed");
         }
     }
+    private void validateDataIdCreditsInformed(Integer id) {
+      if (isEmpty(id)) {
+         throw new ValidationException("The ID to the credits wasn't informed");
+      }
+    }
+    
 }
