@@ -4,7 +4,7 @@ import CreditsController from "../controller/CreditsController.js";
 
 const router = new Router();
 
-router.get('/api/order/:id', CreditsController.findById);
-router.post('/api/order/create', CreditsController.createOrder);
+router.get('/api/credits/:id', CreditsController.findById);
+router.post('/api/credits/create', CreditsController.createCredits);
 
 export default router;

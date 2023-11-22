@@ -2,7 +2,6 @@ package br.com.debtscredits.debtscreditsapi.config.interceptor;
 
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import org.springframework.web.servlet.mvc.condition.RequestConditionHolder;
 
 import br.com.debtscredits.debtscreditsapi.config.exception.ValidationException;
 import feign.RequestInterceptor;

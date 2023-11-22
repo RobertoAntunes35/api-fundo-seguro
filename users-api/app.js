@@ -12,15 +12,12 @@ import OrderRoutes from './src/modules/sales/routes/CreditsRoutes.js'
 
 
 const app = express();
-
 const env = process.env;
 const PORT = env.PORT || 8082;
 
 connectMongoDB();
-
 connectRabbitMQ();
 
-app.use(express.json())
 
 app.get("/api/initial-data", async (req, res) => {
     createInitialDateDebtsMongoDB();
@@ -32,13 +29,11 @@ app.get("/api/initial-data", async (req, res) => {
     })
 })
 
-// Protegendo a Aplicacao
+app.use(express.json())
 app.use(checkToken)
-
-// Rotas 
 app.use(OrderRoutes)
 
-app.get('/teste_debts', (req, res) => {
+app.get('/api/user-transaction/teste_debts', (req, res) => {
     try {
         sendMessageDebtsUpdateQueue([
             {
@@ -61,7 +56,7 @@ app.get('/teste_debts', (req, res) => {
         }
 })
 
-app.get('/teste_credits', (req, resp) => {
+app.get('/api/user-transaction/teste_credits', (req, resp) => {
     try {
         sendMessageCreditsUpdadeQueue([
             {

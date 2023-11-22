@@ -2,7 +2,8 @@ import CreditsService from "../service/CreditsService.js";
 
 
 class CreditsController {
-    async createOrder(req, res) {
+    async createCredits(req, res) {
+        console.log(req)
         let credits = await CreditsService.createCredits(req);
         return res.status(credits.status).json(credits)
     }
